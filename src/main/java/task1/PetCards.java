@@ -12,6 +12,8 @@ public class PetCards {
      */
     private HashMap<UUID, Pet> map = new HashMap<UUID, Pet>();
 
+    private HashMap<String, HashSet<UUID>> mapForQSearch = new HashMap<String, HashSet<UUID>>();
+
     /**
      * Метод добавления животного в базу
      * @param pet объект пет
@@ -22,6 +24,11 @@ public class PetCards {
             throw new Exception("Данное животное уже есть в базе!");
         }
         map.put(pet.uuid, pet);
+        if (mapForQSearch.containsKey(pet.getName())) {
+            mapForQSearch.get(pet.getName()).add(pet.uuid);
+        } else {
+            mapForQSearch.put(pet.getName(), new HashSet<UUID>(Collections.singletonList(pet.uuid)));
+        }
     }
 
     /**
@@ -37,12 +44,66 @@ public class PetCards {
     }
 
     /**
-     * Обновить значения полей животного
-     * @param pet
+     * Получить ссылки на животное по кличке
+     * @param name Имя
+     * @return Set питомцев
      */
-    public void updatePet(Pet pet) {
-        map.put(pet.uuid, pet);
+    public Set<Pet> getPetByName(String name) {
+        Set<Pet> result = new HashSet<Pet>();
+        if (mapForQSearch.containsKey(name)) {
+            Set<UUID> petsUids = mapForQSearch.get(name);
+            Iterator it = petsUids.iterator();
+            while (it.hasNext()) {
+                result.add(getPetByUUID((UUID) it.next()));
+            }
+            return result;
+        }
+
+        return null;
     }
+
+    /**
+     * Изменить имя питомца
+     *
+     * @param uuid id
+     * @param name новое имя
+     * @throws Exception Petы immutable, выбрасывается если не удается добавить нового Pet
+     */
+    public void changeName(UUID uuid, String name) throws Exception {
+        if (map.containsKey(uuid)) {
+            Pet oldPet = getPetByUUID(uuid);
+            remove(uuid);
+            Pet newPet = oldPet.withName(name);
+            try {
+                addPet(newPet);
+            } catch (Exception e) {
+                throw new Exception("Не удалось изменить имя питомца!");
+            }
+
+
+        }
+    }
+
+    /**
+     * Удаление питомца из базы по id
+     *
+     * @param uuid id питомца
+     */
+    public void remove(UUID uuid) {
+        if (map.containsKey(uuid)) {
+            Set<UUID> set = mapForQSearch.get(getPetByUUID(uuid).getName());
+            set.remove(uuid);
+            map.remove(uuid);
+        }
+    }
+//    public void changeWeight(UUID uuid, double weight){
+//        Pet pet = getPetByUUID(uuid);
+//        pet.setWeight();
+//    }
+//    public void changePerson(UUID uuid, String name){
+//        Pet pet = getPetByUUID(uuid);
+//        pet.setName(name);
+//    }
 
     /**
      * Вывести всех питомцев отсортированных по имени

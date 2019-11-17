@@ -10,6 +10,7 @@ public class Person implements Comparable<Person> {
     /**
      * Поле содержащее возраст
      */
+
     private int age;
     /**
      * Поле содержащее имя
@@ -78,4 +79,15 @@ public class Person implements Comparable<Person> {
 
         return this.getName().compareTo(p2.getName());
     }
+
+    /**
+     * ENUM со значениями пола
+     *
+     * @author Александр Коваленко
+     */
+    public enum Sex {
+        MAN,
+        WOMAN
+    }
+
 }

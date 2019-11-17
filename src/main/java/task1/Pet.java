@@ -1,5 +1,10 @@
 package task1;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Value;
+import lombok.With;
+
 import java.util.UUID;
 
 /**
@@ -7,19 +12,24 @@ import java.util.UUID;
  * Класс Pet
  * @author Коваленко Александр
  */
+@Value
+@AllArgsConstructor
 public class Pet {
     public final UUID uuid;
     /**
      * Кличка
      */
-    private String name;
+    @With
+    private final String name;
     /**
      * Вес
      */
+    @With
     private double weight;
     /**
      * Хозяин
      */
+    @With
     private Person owner;
 
     public Pet(String name, double weight, Person owner) {
@@ -28,6 +38,7 @@ public class Pet {
         this.weight = weight;
         this.owner = owner;
     }
+
 
     @Override
     public String toString() {
@@ -39,27 +50,6 @@ public class Pet {
                 '}';
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public Person getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Person owner) {
-        this.owner = owner;
-    }
 }
